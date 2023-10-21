@@ -1,0 +1,53 @@
+version: '3'
+
+services:
+  app1:
+    image: my-flask-app
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: flask_app_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+
+  app2:
+    image: my-flask-app
+    ports:
+      - "5001:5000"
+    depends_on:
+      - mysql
+      - redis
+    environment:
+      MYSQL_HOST: mysql
+      MYSQL_DATABASE: flask_app_db
+      MYSQL_USER: root
+      MYSQL_PASSWORD: root_password
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      DATABASE_URI: f"mysql+pymysql://{mysql_user}:{mysql_password}@{mysql_host}:{mysql_port}/{mysql_database}"
+
+
+  mysql:
+    image: mysql:5.7
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password
+      MYSQL_DATABASE: flask_app_db
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  redis:
+    image: redis:latest
+
+volumes:
+  mysql_data:
+
+networks:
+  default:
+    external:
+      name: my-network
